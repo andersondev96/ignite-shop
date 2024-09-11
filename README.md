@@ -67,7 +67,7 @@ npm run dev
 Depois que o *merge* da sua *pull request* for feito, você poderá deletar a sua *branch*.
 
 ## 📝 Licença
-Esse projeta está sobre a licensa [MINT](MIT)
+Esse projeta está sobre a licensa [MIT](MIT)
 
 ## 👥 Autor
 
