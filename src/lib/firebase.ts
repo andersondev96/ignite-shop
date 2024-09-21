@@ -5,12 +5,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDB0AAA3kOJkX2APLbA_FxUNgJ3HeGHCgs",
-  authDomain: "ignite-shop-40bf5.firebaseapp.com",
-  projectId: "ignite-shop-40bf5",
-  storageBucket: "ignite-shop-40bf5.appspot.com",
-  messagingSenderId: "214452616799",
-  appId: "1:214452616799:web:0ee4e6c5e449eb5782e5ea"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
