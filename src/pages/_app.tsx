@@ -1,18 +1,20 @@
 
 
 import { AppProps } from "next/app";
+import { globalStyles } from "../styles/global";
+
+import logoImg from '../assets/logo.svg';
+import { AuthButton } from "../components/authButton";
+import { CartButton } from "../components/cartButton";
+import { ButtonsContainer, Container, Header } from "../styles/pages/app";
+
 import Image from 'next/image';
 import Link from "next/link";
 import { CartProvider } from "use-shopping-cart";
-import logoImg from '../assets/logo.svg';
-import { CartButton } from "../components/cartButton";
-import { globalStyles } from "../styles/global";
-import { Container, Header } from "../styles/pages/app";
-
 
 globalStyles()
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
 
   return (
     <CartProvider
@@ -27,7 +29,10 @@ export default function App({ Component, pageProps }: AppProps) {
           <Link href="/" prefetch={false}>
             <Image src={logoImg} alt="" />
           </Link>
+            <ButtonsContainer>
             <CartButton />
+            <AuthButton />
+            </ButtonsContainer>
 
         </Header>
         <Component {...pageProps} />
@@ -35,3 +40,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </CartProvider>
   );
 }
+
+export default App
