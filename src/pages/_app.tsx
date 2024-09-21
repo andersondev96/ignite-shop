@@ -11,6 +11,7 @@ import { ButtonsContainer, Container, Header } from "../styles/pages/app";
 import Image from 'next/image';
 import Link from "next/link";
 import { CartProvider } from "use-shopping-cart";
+import { SearchInput } from "../components/searchInput";
 
 globalStyles()
 
@@ -29,10 +30,11 @@ function App({ Component, pageProps }: AppProps) {
           <Link href="/" prefetch={false}>
             <Image src={logoImg} alt="" />
           </Link>
-            <ButtonsContainer>
+          <ButtonsContainer>
+            <SearchInput />
             <CartButton />
             <AuthButton />
-            </ButtonsContainer>
+          </ButtonsContainer>
 
         </Header>
         <Component {...pageProps} />

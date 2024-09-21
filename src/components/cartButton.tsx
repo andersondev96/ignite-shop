@@ -2,7 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Tote } from "phosphor-react";
 import { useShoppingCart } from 'use-shopping-cart';
 import { CartModal } from '../components/cartModal';
-import { Button } from '../styles/pages/cartButton';
+import { Button } from '../styles/components/cartButton';
 
 export function CartButton() {
 	const { cartDetails } = useShoppingCart()

@@ -5,7 +5,18 @@ import { X } from 'phosphor-react'
 import { useState } from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
 import { formatCurrencyString } from 'use-shopping-cart/core'
-import { ButtonContainer, CloseButton, Content, EmptyCartMessage, FooterContainer, ImageContainer, ItemContainer, ItemsContainer, Overlay, ProductsContainer } from '../styles/pages/cartModal'
+import {
+	ButtonContainer,
+	CloseButton,
+	Content,
+	EmptyCartMessage,
+	FooterContainer,
+	ImageContainer,
+	ItemContainer,
+	ItemsContainer,
+	Overlay,
+	ProductsContainer
+} from '../styles/components/cartModal'
 
 export function CartModal() {
 	const { totalPrice, cartDetails, removeItem, clearCart } = useShoppingCart()

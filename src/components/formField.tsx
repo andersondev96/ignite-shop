@@ -1,4 +1,4 @@
-import { FormContainer } from "../styles/pages/formField";
+import { FormContainer } from "../styles/components/formField";
 
 interface FormFieldProps {
 	label: string;

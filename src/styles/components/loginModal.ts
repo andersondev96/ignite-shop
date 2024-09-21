@@ -1,25 +1,22 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { styled } from "..";
 
-
-export const Button = styled('button', {
-	width: '100px',
-	height: '48px',
-	border: 'none',
-	borderRadius: '6px',
-	backgroundColor: '$gray800',
-	cursor: 'pointer',
-	position: 'relative',
-
-	color: '$gray200',
-	fontSize: '$md'
-})
-
 export const Overlay = styled(Dialog.Overlay, {
 	position: 'fixed',
 	inset: 0,
 	backgroundColor: 'rgba(0, 0, 0, 0.75)',
 	animation: 'overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)'
+})
+
+export const Close = styled(Dialog.Close, {
+	position: 'absolute',
+  background: 'transparent',
+  border: 0,
+  top: '1.5rem',
+  right: '1.5rem',
+  lineHeight: 0,
+  cursor: 'pointer',
+  color: '$gray200',
 })
 
 export const Content = styled(Dialog.Content, {
@@ -59,7 +56,7 @@ export const Description = styled(Dialog.Description, {
 		textDecoration: 'underline',
 		cursor: 'pointer',
 		animation: 'opacity 0.2s',
-		
+
 		'&:hover': {
 			opacity: '0.9'
 		}
@@ -68,29 +65,39 @@ export const Description = styled(Dialog.Description, {
 
 export const Form = styled('form', {
 	display: 'flex',
-	gap: '16px',
 	flexDirection: 'column',
+	div: {
+		display: 'flex',
+		gap: '16px',
+		flexDirection: 'column',
+	},
 
 	'.divider': {
 		marginTop: '1.25rem',
 		borderTop: '1px solid $gray100'
+	},
+
+	p: {
+		fontWeight: 'lighter',
+		textAlign: 'center'
 	}
 })
 
 export const ButtonBase = styled('button', {
 	display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+	alignItems: 'center',
+	justifyContent: 'center',
 	gap: '0.5rem',
-  padding: '0.35rem',
-  borderRadius: '0.25rem',
-  cursor: 'pointer',
-  transition: 'background-color 0.2s',
-  fontWeight: 'bolder',
+	padding: '0.35rem',
+	margin: '10px 0 10px',
+	borderRadius: '0.25rem',
+	cursor: 'pointer',
+	transition: 'background-color 0.2s',
+	fontWeight: 'bolder',
 
-  '&:hover': {
-    filter: 'brightness(0.9)',
-  },
+	'&:hover': {
+		filter: 'brightness(0.9)',
+	},
 })
 
 export const GoogleAuthentication = styled(ButtonBase, {
@@ -100,12 +107,11 @@ export const GoogleAuthentication = styled(ButtonBase, {
 })
 
 export const SignInButton = styled(ButtonBase, {
-	margin: '10px 0 20px',
 	height: '48px',
 	backgroundColor: '$green300',
 	color: '$gray100',
 	fontSize: '$md',
-	
+
 	'&:hover': {
 		background: '$green500'
 	}
