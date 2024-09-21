@@ -1,30 +1,21 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import axios from 'axios'
-import Image from 'next/image'
-import { Minus, Plus, X } from 'phosphor-react'
+import { X } from 'phosphor-react'
 import { useState } from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
-import { formatCurrencyString } from 'use-shopping-cart/core'
 import {
-	ButtonContainer,
 	CloseButton,
 	Content,
-	EmptyCartMessage,
-	FooterContainer,
-	ImageContainer,
-	ItemContainer,
-	ItemsContainer,
 	Overlay,
-	ProductsContainer,
-	Quantity
 } from '../styles/components/cartModal'
+import { Cart } from './cart'
+import { CompleteRegistration } from './compleRegistration'
 
 export function CartModal() {
-	const { totalPrice, cartDetails, removeItem, clearCart } = useShoppingCart()
+	const [isCompleteRegistrationMode, setIsCompleteRegistrationMode] = useState(false);
+
+	const { cartDetails, clearCart } = useShoppingCart()
 
 	const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false)
-
-	const cartCount = cartDetails ? Object.keys(cartDetails).length : 0;
 
 	const getCartItems = () => {
 		return Object.keys(cartDetails).map((itemId) => {
@@ -41,7 +32,8 @@ export function CartModal() {
 
 	async function handleBuyCart() {
 		try {
-			setIsCreatingCheckoutSession(true);
+			setIsCompleteRegistrationMode(true);
+			/* setIsCreatingCheckoutSession(true);
 
 			const cartItems = getCartItems();
 
@@ -50,76 +42,31 @@ export function CartModal() {
 			const { checkoutUrl } = response.data;
 
 			window.location.href = checkoutUrl
-			clearCart();
+			clearCart(); */
 		} catch (err) {
-			setIsCreatingCheckoutSession(false);
-			alert('Falha ao redirecionar ao checkout!')
+			/* setIsCreatingCheckoutSession(false);
+			alert('Falha ao redirecionar ao checkout!') */
 		}
 	}
-
 
 	return (
 		<Dialog.Portal>
 			<Overlay />
 
 			<Content>
-				<Dialog.Title>Carrinho de compras</Dialog.Title>
-
+				<Dialog.Title>{isCompleteRegistrationMode ? 'Completar cadastro' : 'Carrinho de compras'}</Dialog.Title>
 				<CloseButton>
 					<X size={24} />
 				</CloseButton>
-
-				{cartCount === 0 ? (
-					<EmptyCartMessage>O carrinho está vazio</EmptyCartMessage>
+				{isCompleteRegistrationMode ? (
+					<CompleteRegistration />
 				) : (
-					<ProductsContainer>
-						<ItemsContainer>
-							{
-								Object.keys(cartDetails).map((itemId) => {
-									const item = cartDetails[itemId]
 
-									return (
-										<ItemContainer key={item.id}>
-											<ImageContainer>
-												<Image src={item.image} alt={item.name} width={64} height={64} />
-											</ImageContainer>
-											<div>
-												<span>{item.name}</span>
-												<Quantity>
-												<span>{item.quantity}x</span>
-												<Plus size={16} />
-												<Minus size={16} />
-												</Quantity>
-												<strong>{formatCurrencyString({ value: item.price, currency: item.currency })}</strong>
-												<button onClick={() => removeItem(item.id)}>Remover</button>
-											</div>
-										</ItemContainer>
-									)
-								})
-							}
+					<Cart onBuyCart={handleBuyCart} disabledButtonFinish={isCreatingCheckoutSession} />
 
-						</ItemsContainer>
-
-						<FooterContainer>
-							<div>
-								<span>Quantidade:</span>
-								<p>{cartCount} {cartCount > 1 ? 'items' : 'item'}</p>
-							</div>
-
-							<div>
-								<strong>Valor total:</strong>
-								<p>{formatCurrencyString({ value: totalPrice, currency: 'BRL' })}</p>
-							</div>
-
-							<ButtonContainer onClick={handleBuyCart} disabled={isCreatingCheckoutSession}>
-								{isCreatingCheckoutSession ? 'Processando...' : 'Finalizar compra'}
-							</ButtonContainer>
-						</FooterContainer>
-					</ProductsContainer>
 				)}
-
-
 			</Content>
+
 		</Dialog.Portal>
 	)
 }
