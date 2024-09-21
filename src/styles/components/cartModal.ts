@@ -77,6 +77,13 @@ export const ItemsContainer = styled('div', {
   gap: '24px',
 });
 
+export const Quantity = styled('button', {
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: '1rem',
+})
+
 export const ProductsContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',

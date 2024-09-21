@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import axios from 'axios'
 import Image from 'next/image'
-import { X } from 'phosphor-react'
+import { Minus, Plus, X } from 'phosphor-react'
 import { useState } from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
 import { formatCurrencyString } from 'use-shopping-cart/core'
@@ -15,7 +15,8 @@ import {
 	ItemContainer,
 	ItemsContainer,
 	Overlay,
-	ProductsContainer
+	ProductsContainer,
+	Quantity
 } from '../styles/components/cartModal'
 
 export function CartModal() {
@@ -43,7 +44,7 @@ export function CartModal() {
 			setIsCreatingCheckoutSession(true);
 
 			const cartItems = getCartItems();
-	
+
 			const response = await axios.post('/api/checkout', { cartItems })
 
 			const { checkoutUrl } = response.data;
@@ -84,7 +85,11 @@ export function CartModal() {
 											</ImageContainer>
 											<div>
 												<span>{item.name}</span>
+												<Quantity>
 												<span>{item.quantity}x</span>
+												<Plus size={16} />
+												<Minus size={16} />
+												</Quantity>
 												<strong>{formatCurrencyString({ value: item.price, currency: item.currency })}</strong>
 												<button onClick={() => removeItem(item.id)}>Remover</button>
 											</div>

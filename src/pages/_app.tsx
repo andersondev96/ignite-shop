@@ -1,17 +1,10 @@
-
-
 import { AppProps } from "next/app";
 import { globalStyles } from "../styles/global";
 
-import logoImg from '../assets/logo.svg';
-import { AuthButton } from "../components/authButton";
-import { CartButton } from "../components/cartButton";
-import { ButtonsContainer, Container, Header } from "../styles/pages/app";
+import { Container } from "../styles/pages/app";
 
-import Image from 'next/image';
-import Link from "next/link";
 import { CartProvider } from "use-shopping-cart";
-import { SearchInput } from "../components/searchInput";
+import { Header } from "../components/header";
 
 globalStyles()
 
@@ -26,17 +19,7 @@ function App({ Component, pageProps }: AppProps) {
       shouldPersist
     >
       <Container>
-        <Header>
-          <Link href="/" prefetch={false}>
-            <Image src={logoImg} alt="" />
-          </Link>
-          <ButtonsContainer>
-            <SearchInput />
-            <CartButton />
-            <AuthButton />
-          </ButtonsContainer>
-
-        </Header>
+        <Header />
         <Component {...pageProps} />
       </Container>
     </CartProvider>
