@@ -2,8 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { ToastContainer, toast } from 'react-toastify'
-import "react-toastify/dist/ReactToastify.css"
+import { toast } from 'react-toastify'
 import Stripe from 'stripe'
 import { useShoppingCart } from 'use-shopping-cart'
 import { CartModal } from '../../components/cartModal'
@@ -39,7 +38,6 @@ export default function Product({ product }: ProductProps) {
 
 	return (
 		<>
-		<ToastContainer />
 		<Head >
         <title>{product.name} | Ignite Shop</title>
       </Head>

@@ -1,7 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { X } from 'phosphor-react';
-import { auth } from '../lib/firebase';
 import {
 	Close,
 	Content,
@@ -13,11 +11,18 @@ import {
 	Title
 } from '../styles/components/loginModal';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { toast } from 'react-toastify';
+import { AuthContext } from '../contexts/AuthContext';
 import { FormField } from './formField';
 
-export function LoginModal() {
+interface LoginModalProps {
+	onModalClose: () => void;
+}
+
+export function LoginModal({ onModalClose }: LoginModalProps) {
 	const [isCreateNewAccount, setIsCreateNewAccount] = useState(false);
+	const { signIn, createUser } = useContext(AuthContext);
 
 	const toggleAccountMode = () => setIsCreateNewAccount(prev => !prev)
 
@@ -27,28 +32,29 @@ export function LoginModal() {
 		try {
 			const formData = new FormData(event.target)
 
+			const name = formData.get('name') as string | null
 			const email = formData.get('email') as string | null
 			const password = formData.get('password') as string | null
 
 			if (isCreateNewAccount) {
-				const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-				const user = userCredential.user
+				createUser({
+					name,
+					email,
+					password
+				})
 
-				console.log(`User Created: ${user}`)
+				toast.success(`Usuário criado com sucesso`);
+				setIsCreateNewAccount(false);
+
 			} else {
-				const userCredential = signInWithEmailAndPassword(auth, email, password)
-					.then((userCredential) => {
-						const user = userCredential.user
+				signIn({
+					email,
+					password
+				})
 
-						console.log(`Logado como ${user}`)
-					})
+				toast.success(`Usuário autenticado`);
+				onModalClose();
 
-					.catch((error) => {
-						const errorCode = error.code
-						const errorMessage = error.message
-
-						console.error(errorMessage)
-					})
 			}
 		} catch (err) {
 			console.log(`Error creating user: ${err.message}`)
