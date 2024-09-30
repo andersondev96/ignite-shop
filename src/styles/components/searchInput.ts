@@ -6,9 +6,10 @@ export const SearchInputContainer = styled('div', {
 	gap: '1rem',
 	background: '$gray800',
 	borderRadius: '6px',
-	padding: '4px',
+	padding: '0.5rem 1rem',
 
 	input: {
+		width: '100%',
 		background: 'transparent',
 		boxShadow: 'none',
 		outline: 'none',
