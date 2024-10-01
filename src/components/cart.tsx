@@ -1,7 +1,7 @@
-import Image from "next/image"
-import { Minus, Plus } from "phosphor-react"
-import { formatCurrencyString, useShoppingCart } from "use-shopping-cart"
-import { ButtonContainer, EmptyCartMessage, FooterContainer, ImageContainer, ItemContainer, ItemsContainer, ProductsContainer, Quantity } from "../styles/components/cart"
+import Image from "next/image";
+import { Minus, Plus } from "phosphor-react";
+import { formatCurrencyString, useShoppingCart } from "use-shopping-cart";
+import { ButtonContainer, EmptyCartMessage, FooterContainer, ImageContainer, ItemContainer, ItemsContainer, ProductsContainer, Quantity } from "../styles/components/cart";
 
 
 interface CartProps {
@@ -10,9 +10,21 @@ interface CartProps {
 }
 
 export function Cart({onBuyCart, disabledButtonFinish}: CartProps) {
-	const { totalPrice, cartDetails, removeItem, clearCart } = useShoppingCart()
+	const { totalPrice, cartDetails, removeItem, clearCart, incrementItem, decrementItem } = useShoppingCart()
 
 	const cartCount = cartDetails ? Object.keys(cartDetails).length : 0;
+
+	const handleIncrementItem = (id: string) => {
+		incrementItem(id, {
+			count: 1
+		})
+	}
+
+	const handleDecrementItem = (id: string) => {
+		decrementItem(id, {
+			count: 1
+		})
+	}
 
 
 	return (
@@ -36,8 +48,14 @@ export function Cart({onBuyCart, disabledButtonFinish}: CartProps) {
 												<span>{item.name}</span>
 												<Quantity>
 												<span>{item.quantity}x</span>
-												<Plus size={16} />
-												<Minus size={16} />
+												<Plus 
+													onClick={() => handleIncrementItem(item.id)} 
+													size={16} 
+												/>
+												<Minus 
+													onClick={() => handleDecrementItem(item.id)} 
+													size={16} 
+												/>
 												</Quantity>
 												<strong>{formatCurrencyString({ value: item.price, currency: item.currency })}</strong>
 												<button onClick={() => removeItem(item.id)}>Remover</button>

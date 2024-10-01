@@ -12,6 +12,6 @@ export const Button = styled('button', {
 	padding: '1rem 0',
 
 	color: '$gray200',
-	fontSize: '$md'
+	fontSize: '14px'
 })
 
