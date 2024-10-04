@@ -1,7 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import axios from 'axios'
 import { X } from 'phosphor-react'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useShoppingCart } from 'use-shopping-cart'
+import { AuthContext } from '../contexts/AuthContext'
 import {
 	CloseButton,
 	Content,
@@ -11,6 +13,8 @@ import { Cart } from './cart'
 import { CompleteRegistration } from './compleRegistration'
 
 export function CartModal() {
+	const { user } = useContext(AuthContext);
+
 	const [isCompleteRegistrationMode, setIsCompleteRegistrationMode] = useState(false);
 
 	const { cartDetails, clearCart } = useShoppingCart()
@@ -32,20 +36,32 @@ export function CartModal() {
 
 	async function handleBuyCart() {
 		try {
-			setIsCompleteRegistrationMode(true);
-			/* setIsCreatingCheckoutSession(true);
+			const response = await axios.post('/api/stripe-customer', { userName: user.name });
 
-			const cartItems = getCartItems();
+			if (response.status === 200) {
+				const data = response.data
 
-			const response = await axios.post('/api/checkout', { cartItems })
+				if (data.customer.length > 0) {
+					setIsCreatingCheckoutSession(true);
 
-			const { checkoutUrl } = response.data;
+					const cartItems = getCartItems();
 
-			window.location.href = checkoutUrl
-			clearCart(); */
+					const response = await axios.post('/api/checkout', { cartItems })
+
+					const { checkoutUrl } = response.data;
+
+					window.location.href = checkoutUrl
+					clearCart();
+				} else {
+					setIsCompleteRegistrationMode(true);
+				}
+			} else if (response.status === 404) {
+				console.error('Cliente não encontrado. Complete seu cadastro.');
+			}
+
 		} catch (err) {
-			/* setIsCreatingCheckoutSession(false);
-			alert('Falha ao redirecionar ao checkout!') */
+			setIsCreatingCheckoutSession(false);
+			alert('Falha ao redirecionar ao checkout!')
 		}
 	}
 

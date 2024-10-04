@@ -1,5 +1,7 @@
 import axios from "axios";
-import { FormEvent, useContext, useEffect, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
+import { toast } from "react-toastify";
+import { useShoppingCart } from "use-shopping-cart";
 import { AuthContext } from "../contexts/AuthContext";
 import { getCEP, getCNPJ } from "../pages/api/brasil-api";
 import { ButtonContainer, CompleteRegistrationContainer, Form } from "../styles/components/completeRegistration";
@@ -10,6 +12,7 @@ interface AddressProps {
 	street: string,
 	neighborhood: string,
 	number: number | string,
+	complement: string,
 	state: string,
 	city: string
 }
@@ -18,7 +21,7 @@ export function CompleteRegistration() {
 	const { user } = useContext(AuthContext);
 
 	const [formData, setFormData] = useState({
-		cpf: "",
+		document: "",
 		phone: "",
 		cep: "",
 		street: "",
@@ -29,35 +32,21 @@ export function CompleteRegistration() {
 		city: "",
 	});
 
-	const [customer, setCustomer] = useState(null);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
+	const { cartDetails, clearCart } = useShoppingCart()
 
-	const loadCustomer = async () => {
-		try {
-			setLoading(true);
-			setError(null);
+	const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false)
 
-			if (!user?.name) {
-				throw new Error("Nome do usuário indisponível");
+	const getCartItems = () => {
+		return Object.keys(cartDetails).map((itemId) => {
+			const item = cartDetails[itemId]
+
+			return {
+				name: item.name,
+				image: item.image,
+				price: item.price,
+				quantity: item.quantity
 			}
-
-			const response = await axios.post('/api/stripe-customer', { userName: user.name });
-
-			const data = await response.data;
-
-			if (response.status === 200) {
-				setCustomer(data.customer)
-			} else {
-				throw new Error(data.error || "Erro ao buscar o cliente")
-			}
-
-		} catch (error) {
-			console.error("Erro ao carregar o cliente do stripe: ", error)
-			setError("Erro ao carregar o cliente");
-		} finally {
-			setLoading(false);
-		}
+		});
 	}
 
 	const loadAddress = async (document: string) => {
@@ -67,6 +56,7 @@ export function CompleteRegistration() {
 				city: "",
 				neighborhood: "",
 				number: "",
+				complement: "",
 				state: "",
 				street: ""
 			}
@@ -77,13 +67,12 @@ export function CompleteRegistration() {
 				addressInfo = await getCEP(document);
 			}
 
-			console.log(addressInfo);
-
 			if (addressInfo) {
 				setFormData((prev) => ({
 					...prev,
 					street: addressInfo.street || '',
 					neighborhood: addressInfo.neighborhood || '',
+					complement: addressInfo.complement,
 					city: addressInfo.city || '',
 					state: addressInfo.state || '',
 					cep: addressInfo.cep || ''
@@ -91,7 +80,7 @@ export function CompleteRegistration() {
 			}
 
 		} catch (err) {
-			console.log("CNPJ ou CEP não encontrado.")
+			console.error("CNPJ ou CEP não encontrado.")
 		}
 
 	}
@@ -106,40 +95,54 @@ export function CompleteRegistration() {
 
 		const valueFormatted = value.replace(/[^a-zA-Z0-9 ]/g, '');
 
-		console.log(valueFormatted);
-
-		if (name === 'cpf' || name === 'cep') {
+		if (name === 'document' || name === 'cep') {
 			if (valueFormatted.length === 14 || valueFormatted.length === 8) {
 				loadAddress(valueFormatted);
 			}
 		}
 	}
 
-	const handleSubmit = (event: FormEvent) => {
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
-		const formData = new FormData(event.target as HTMLFormElement);
+		try {
+			const formData = new FormData(event.target as HTMLFormElement);
 
-		const data = {
-			cpf: formData.get('cpf'),
-			phone: formData.get('phone'),
-			cep: formData.get('cep'),
-			street: formData.get('street'),
-			neighborhood: formData.get('neighborhood'),
-			complement: formData.get('complement'),
-			number: formData.get('number'),
-			state: formData.get('state'),
-			city: formData.get('city'),
-		};
-	}
+			const data = {
+				name: user?.name,
+				email: user?.email,
+				phone: formData.get('phone'),
+				document: formData.get('document'),
+				cep: formData.get('cep'),
+				street: formData.get('street'),
+				neighborhood: formData.get('neighborhood'),
+				complement: formData.get('complement'),
+				number: formData.get('number'),
+				state: formData.get('state'),
+				city: formData.get('city'),
+			};
 
-	useEffect(() => {
-		if (user) {
-			loadCustomer()
+			const response = await axios.post('/api/create-customer', data);
+
+			if (response.status === 200) {
+				toast.success("Cliente cadastrado com sucesso!");
+
+				setIsCreatingCheckoutSession(true);
+
+				const cartItems = getCartItems();
+
+				const response = await axios.post('/api/checkout', { cartItems })
+
+				const { checkoutUrl } = response.data;
+
+				window.location.href = checkoutUrl
+				clearCart();
+			}
+
+		} catch (err) {
+			throw new Error("Erro ao cadastrar o cliente: ", err.message);
 		}
-	}, [user]);
-
-
+	}
 
 	return (
 		<CompleteRegistrationContainer>
@@ -148,11 +151,11 @@ export function CompleteRegistration() {
 			<Form onSubmit={handleSubmit}>
 				<div>
 					<FormField
-						name="cpf"
+						name="document"
 						label="CPF/CNPJ"
 						type="text"
 						placeholder="CPF/CNPJ"
-						value={formData.cpf}
+						value={formData.document}
 						onChange={handleInputChange}
 					/>
 
@@ -240,7 +243,7 @@ export function CompleteRegistration() {
 					/>
 				</div>
 
-				<ButtonContainer>
+				<ButtonContainer disabled={isCreatingCheckoutSession}>
 					Salvar
 				</ButtonContainer>
 			</Form>

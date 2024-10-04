@@ -9,13 +9,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	try {
-		const findCustomer = await stripe.customers.search({
+		const response = await stripe.customers.search({
 			query: `name: '${userName}'`,
 		})
 
-		return res.status(200).json({
-			customer: findCustomer,
-		});
+		const data = response.data;
+
+		if (data) {
+			return res.status(200).json({
+				customer: data,
+			});	
+		} else {
+			return res.status(404).json({ error: 'Customer not found' });
+		}
 
 	} catch (err) {
 		return res.status(500).json({ error: 'Erro ao buscar cliente no stripe' });

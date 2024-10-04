@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		phone,
 		document,
 		cep,
-		address,
+		street,
 		neighborhood,
 		complement,
 		number,
@@ -26,16 +26,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			email,
 			phone,
 			metadata: {
-				document
+				'Documento': document
 			},
 			address: {
-				line1: `${address}, ${complement} ${neighborhood}, ${number}`,
+				line1: `${street}, ${complement} ${neighborhood}, ${number}`,
 				city,
 				state,
 				postal_code: cep,
-				
-			}
-				
+			}	
 		})
 
 		return res.status(200).json({
