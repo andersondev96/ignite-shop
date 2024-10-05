@@ -13,11 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			query: `name: '${userName}'`,
 		})
 
-		const data = response.data;
+		const customers = response.data;
 
-		if (data) {
+		if (customers && customers.length > 0) {
 			return res.status(200).json({
-				customer: data,
+				customer: customers,
 			});	
 		} else {
 			return res.status(404).json({ error: 'Customer not found' });

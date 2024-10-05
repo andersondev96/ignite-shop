@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { stripe } from "../../lib/stripe";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-	const { cartItems } = req.body;
+	const { cartItems, customer } = req.body;
 
 	if (req.method !== 'POST') {
 		return res.status(405).json({ error: 'Method not allowed.' })	
@@ -34,8 +34,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			success_url: successUrl,
 			cancel_url: cancelUrl,
 			mode: 'payment',
-			line_items: lineItems
+			line_items: lineItems,
+			customer,
+			payment_method_types: ['card'],
+			
 		})
+
 
 		return res.status(201).json({
 			checkoutUrl: checkoutSession.url,
@@ -44,8 +48,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	} catch (err) {
 		return res.status(500).json({ error: 'Failed to create checkout session' });
 	}
-
-	
-
-	
 }

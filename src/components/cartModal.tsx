@@ -36,26 +36,26 @@ export function CartModal() {
 
 	async function handleBuyCart() {
 		try {
-			const response = await axios.post('/api/stripe-customer', { userName: user.name });
+			const { data: customerData, status } = await axios.post('/api/stripe-customer', { userName: user.name });
 
-			if (response.status === 200) {
-				const data = response.data
+			if (status === 200 && customerData.customer && customerData.customer.length > 0) {
+				const customer = customerData.customer[0]
 
-				if (data.customer.length > 0) {
-					setIsCreatingCheckoutSession(true);
+				console.log(customer)
+				setIsCreatingCheckoutSession(true);
 
-					const cartItems = getCartItems();
+				const cartItems = getCartItems();
 
-					const response = await axios.post('/api/checkout', { cartItems })
+				const response = await axios.post('/api/checkout', { cartItems, customer: customer.id })
 
-					const { checkoutUrl } = response.data;
+				const { checkoutUrl } = response.data;
 
-					window.location.href = checkoutUrl
-					clearCart();
-				} else {
-					setIsCompleteRegistrationMode(true);
-				}
-			} else if (response.status === 404) {
+				window.location.href = checkoutUrl
+				
+				clearCart();
+
+			} else if (status === 404) {
+				setIsCompleteRegistrationMode(true);
 				console.error('Cliente não encontrado. Complete seu cadastro.');
 			}
 
